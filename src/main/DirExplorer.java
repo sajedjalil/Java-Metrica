@@ -1,7 +1,7 @@
 package main;
 
 import java.io.File;
-
+//2
 public class DirExplorer {
 	
 	 public interface FileHandler {
@@ -14,7 +14,11 @@ public class DirExplorer {
 	 
 	    private FileHandler fileHandler;
 	    private Filter filter;
-	 
+	    
+	   
+	  /*dfd
+	   * 
+	   */
 	    
 
 		public DirExplorer(Filter filter, FileHandler fileHandler) {
