@@ -36,13 +36,14 @@ public class Startup {
 		
 		LinesOfCode lc = new LinesOfCode(inputDirectory);
    	 
-   	 	System.out.println( lc.getTotalLine(inputDirectory +  lc.filePaths.get(0)) );
+   	 	System.out.println("Total LOC: "+ lc.getTotalLine(inputDirectory +  lc.filePaths.get(0)) );
    	 	
    	 	
    	 	CompilationUnit cu = JavaParser.parse(new File(inputDirectory +  lc.filePaths.get(0))); 
    	 	VoidVisitor<?> commentVisitor = new CommentFetecher(); 
    	 	
    	 	commentVisitor.visit(cu, null);
+   	 	((CommentFetecher) commentVisitor).print();
    	 	
 	}
 }

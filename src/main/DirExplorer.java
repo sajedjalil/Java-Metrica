@@ -1,7 +1,7 @@
 package main;
 
 import java.io.File;
-//2
+
 public class DirExplorer {
 	
 	 public interface FileHandler {
@@ -15,30 +15,31 @@ public class DirExplorer {
 	    private FileHandler fileHandler;
 	    private Filter filter;
 	    
-	   
-	  /*dfd
-	   * 
-	   */
 	    
-
 		public DirExplorer(Filter filter, FileHandler fileHandler) {
 	        this.filter = filter;
-	        this.fileHandler = fileHandler;
+	        this.fileHandler = fileHandler; 
 	    }
 	 
 	    public void explore(File root) {
 	        explore(0, "", root);
 	    }
-	 
+	    
+	    /* 1
+	     2
+	     3 */
 	    private void explore(int level, String path, File file) {
 	        if (file.isDirectory()) {
 	            for (File child : file.listFiles()) {
 	                explore(level + 1, path + "/" + child.getName(), child);
+	                /* 5
+	                 *  6
+	                 *  7*/
 	            }
 	        } else {
 	            if (filter.interested(level, path, file)) {
 	                fileHandler.handle(level, path, file);
 	            }
-	        }
+	        }//sfsdfds
 	    }
 }

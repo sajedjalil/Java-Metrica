@@ -6,21 +6,28 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class CommentFetecher extends  VoidVisitorAdapter<Void>{
 	
+	int singleCommentLines = 0;
+	int multipleCommentsLine = 0;
 	
-	/*
 	@Override
 	public void visit(BlockComment bc, Void arg ) {
 		super.visit(bc, arg); 
-		System.out.println(bc.getContent());
+		multipleCommentsLine +=  bc.getContent().toString().split(System.getProperty("line.separator")).length;
 		
 	}
-	*/
+	
 	
 	@Override
 	public void visit(LineComment lc, Void arg ) {
 		super.visit(lc, arg); 
-		System.out.println(lc.getContent());
+		singleCommentLines++;
 		
 	}
 	
+	
+	public void print() {
+		System.out.println("Single line Comments: "+singleCommentLines);
+		System.out.println("Multiple line Comments: "+multipleCommentsLine);
+
+	}
 }
