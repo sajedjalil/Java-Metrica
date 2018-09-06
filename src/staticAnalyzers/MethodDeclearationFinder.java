@@ -33,7 +33,7 @@ public class MethodDeclearationFinder {
                         methods.add( makeMethodData(n , absoluteFilePath) );
                     }
                 }.visit(JavaParser.parse(new File(absoluteFilePath) ), null);
-                System.out.println(); // empty line
+                //System.out.println(); // empty line
             } catch (IOException e) {
                 new RuntimeException(e);
             }

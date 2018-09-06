@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 
+import objectOrientedAnalysis.ObjectOrientedAnalyzer;
 import staticAnalyzers.StaticAnalyzerStarter;
 
 public class Startup {
@@ -27,10 +28,10 @@ public class Startup {
 	
 	private void initializer () throws Exception {
 		
-		inputDirectory = new File(System.getProperty("user.dir"));
+		inputDirectory = new File(System.getProperty("user.dir")+"/../JAVA-OOP");
 		
-		new StaticAnalyzerStarter(inputDirectory);
-   	 
+		//new StaticAnalyzerStarter(inputDirectory);
+   	 	new ObjectOrientedAnalyzer( inputDirectory );
    	 	
    	 	
 	}

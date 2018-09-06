@@ -4,7 +4,7 @@ import com.github.javaparser.ast.comments.BlockComment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class CommentFetecher extends  VoidVisitorAdapter<Void>{
+public class CommentFetecher extends VoidVisitorAdapter<Void>{
 	
 	int singleCommentLines = 0;
 	int multipleCommentsLine = 0;
