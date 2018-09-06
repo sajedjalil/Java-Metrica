@@ -13,7 +13,6 @@ public class CommentFetecher extends  VoidVisitorAdapter<Void>{
 	public void visit(BlockComment bc, Void arg ) {
 		super.visit(bc, arg); 
 		multipleCommentsLine +=  bc.getContent().toString().split(System.getProperty("line.separator")).length;
-		
 	}
 	
 	
@@ -22,12 +21,5 @@ public class CommentFetecher extends  VoidVisitorAdapter<Void>{
 		super.visit(lc, arg); 
 		singleCommentLines++;
 		
-	}
-	
-	
-	public void print() {
-		System.out.println("Single line Comments: "+singleCommentLines);
-		System.out.println("Multiple line Comments: "+multipleCommentsLine);
-
 	}
 }

@@ -2,12 +2,7 @@ package main;
 
 import java.io.File;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.visitor.VoidVisitor;
-
-import staticAnalyzers.CommentFetecher;
-import staticAnalyzers.LinesOfCode;
+import staticAnalyzers.StaticAnalyzerStarter;
 
 public class Startup {
 	
@@ -34,16 +29,9 @@ public class Startup {
 		
 		inputDirectory = new File(System.getProperty("user.dir"));
 		
-		LinesOfCode lc = new LinesOfCode(inputDirectory);
+		new StaticAnalyzerStarter(inputDirectory);
    	 
-   	 	System.out.println("Total LOC: "+ lc.getTotalLine(inputDirectory +  lc.filePaths.get(0)) );
    	 	
-   	 	
-   	 	CompilationUnit cu = JavaParser.parse(new File(inputDirectory +  lc.filePaths.get(0))); 
-   	 	VoidVisitor<?> commentVisitor = new CommentFetecher(); 
-   	 	
-   	 	commentVisitor.visit(cu, null);
-   	 	((CommentFetecher) commentVisitor).print();
    	 	
 	}
 }
