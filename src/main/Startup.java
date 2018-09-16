@@ -33,7 +33,7 @@ public class Startup {
 		inputDirectory = new File(System.getProperty("user.dir")+"/../proguard6.0.3");
 		
 		new StaticAnalyzerStarter(inputDirectory);
-   	 	//new ObjectOrientedAnalyzer( inputDirectory );
+   	 	new ObjectOrientedAnalyzer( inputDirectory );
    	 	
    	 	
 	}

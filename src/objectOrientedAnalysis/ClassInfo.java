@@ -20,13 +20,15 @@ class ClassInfo {
 	
 	String parentClass = ""; //done
 	String filePath = null; //done
+	String basePath = null; //done
 	String className = null; //done
-	int depthOfInheritence;
+	int depthOfInheritence = 0;
 	int totalChilds = 0; //done
 	
-	public ClassInfo(String filePath) {
+	public ClassInfo(String basePath, String filePath) {
 		
 		this.filePath = filePath;
+		this.basePath = basePath;
 		findMethodCount();
 		findClassNameAndParentClass();
 	}
@@ -42,7 +44,7 @@ class ClassInfo {
                         //System.out.println(n.getNameAsString());
                         totalMethods++;
                     }
-                }.visit(JavaParser.parse(new File(filePath) ), null);
+                }.visit(JavaParser.parse(new File(basePath+filePath) ), null);
                 //System.out.println(); // empty line
             } catch (IOException e) {
                 new RuntimeException(e);
@@ -63,11 +65,11 @@ class ClassInfo {
                         	className = n.getNameAsString();
                         	//System.out.println(className);
                     	    List<String> list = Arrays.asList(n.getRange().toString().replaceAll("[^0-9]+", " ").trim().split(" "));
-                        	findParentClassName(filePath, Integer.parseInt(list.get(0)));
+                        	findParentClassName(basePath+filePath, Integer.parseInt(list.get(0)));
                         	
                         }
                     }
-                }.visit(JavaParser.parse(new File(filePath) ), null);
+                }.visit(JavaParser.parse(new File(basePath+filePath) ), null);
                 //System.out.println(); // empty line
             } catch (IOException e) {
                 new RuntimeException(e);

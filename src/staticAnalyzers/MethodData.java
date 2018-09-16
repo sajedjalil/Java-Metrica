@@ -28,24 +28,9 @@ public class MethodData {
 			methodRange.add( Integer.parseInt(s) );
 		}
 		
-		calculateComplexity();
+		
 	}
 	
-	private void calculateComplexity() {
-		
-		CompilationUnit cu = null;
-		try {
-			cu = JavaParser.parse(new File(basePath+filePath));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		ConditionalStatementFetcher complexityVisitor = new ConditionalStatementFetcher(); 
-   	 	complexityVisitor.visit(cu, methodRange);
-   	 	
-   	 	complexity = complexityVisitor.complexity;
-	}
 	
 	
 }

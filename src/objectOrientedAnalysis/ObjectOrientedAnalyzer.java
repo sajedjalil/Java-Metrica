@@ -15,6 +15,7 @@ public class ObjectOrientedAnalyzer {
 	public ArrayList<ClassInfo> classes = new ArrayList<ClassInfo>();
 	
 	Map<String, ArrayList<String>> map = new HashMap<String,  ArrayList<String>>();
+	Map<String, Integer> classMapping = new HashMap<String,  Integer>();
 	
 	
 	public ObjectOrientedAnalyzer(File basePath) {
@@ -26,23 +27,26 @@ public class ObjectOrientedAnalyzer {
 		
 		mapChildToParent();
 		findChildNumber();
+		findDepthOfInheritence();
 		
 		printResult();
 	}
 	
 	private void printResult() {
 		for( ClassInfo c: classes) {
-			System.out.println(c.filePath + " "+c.totalMethods+" "+c.totalChilds);
+			System.out.println(c.filePath + "\t"+c.totalMethods+"\t"+c.totalChilds+"\t"+c.depthOfInheritence);
 		}
 	}
 	
  	private void initiateClassObjects() {
 		
 		for(String path: filePaths) {
-			path = basepath + path;
 			
-			ClassInfo temp = new ClassInfo(path);
-			if(temp.className != null) classes.add( temp );
+			ClassInfo temp = new ClassInfo(basepath , path);
+			if(temp.className != null) {
+				classes.add( temp );
+				classMapping.put( temp.className, classes.size()-1 );
+			}
 		}
 		
 		
@@ -85,6 +89,26 @@ public class ObjectOrientedAnalyzer {
 		}
 	}
 	
+	private void findDepthOfInheritence() {
+		
+		for(ClassInfo c: classes) {
+			
+			c.depthOfInheritence = dfs(c, 0);
+		}
+		
+	}
 	
+	private int dfs(ClassInfo c, int level) {
+		
+		//System.out.println(c.filePath);
+		// c has a parent class and the parent class is not an library class
+		if(!c.parentClass.equals("") &&  classMapping.get( c.parentClass) != null) {
+			//System.out.println( );
+			level += dfs( classes.get( classMapping.get( c.parentClass) ), level+1);
+		}
+		
+		
+		return level;
+	}
 	
 }

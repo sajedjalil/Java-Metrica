@@ -2,8 +2,6 @@ package staticAnalyzers;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import com.github.javaparser.ast.CompilationUnit;
 import com.google.common.base.Strings;
 
 import main.DirExplorer;
@@ -66,7 +64,7 @@ public class StaticAnalyzerStarter {
 			int start = md.get(i).methodRange.get(0);
 			int last = md.get(i).methodRange.get(2);
 			
-			for(int j=start; j<=last; j++) {
+			for(int j=start; j<last; j++) {
 				
 				for(String s: keyWords) {
 					if( lines.get(j).contains(s)) {
