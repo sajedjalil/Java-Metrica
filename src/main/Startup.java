@@ -28,7 +28,9 @@ public class Startup {
 	
 	private void initializer () throws Exception {
 		
-		inputDirectory = new File(System.getProperty("user.dir")+"/../JAVA-OOP");
+		//inputDirectory = new File(System.getProperty("user.dir")+"/../JAVA-OOP");
+		//inputDirectory = new File(System.getProperty("user.dir")+"/../proguard6.0.3/core/src/proguard/io");
+		inputDirectory = new File(System.getProperty("user.dir")+"/../proguard6.0.3");
 		
 		new StaticAnalyzerStarter(inputDirectory);
    	 	//new ObjectOrientedAnalyzer( inputDirectory );

@@ -13,9 +13,7 @@ public class StaticAnalyzerStarter {
 	public ArrayList<String> filePaths = new ArrayList<String>();
 	public ArrayList<LineOfCodes> lineOfCodesStats = new ArrayList<LineOfCodes>();
 	
-	CompilationUnit cu = null;
-	LineOfCodes lc = null;
-	ConditionalStatementFetcher complexityVisitor = null;
+	
 	MethodDeclearationFinder mdf = null;
 	ArrayList<MethodData> allMethodData = new ArrayList<MethodData>();
 	
@@ -37,20 +35,52 @@ public class StaticAnalyzerStarter {
 	
 	private void analyze(String projectPath) {
 		
-		
+		//loc, comment, method name, cyclomatic complexity
 		for(String path: filePaths) {
 			
-			lineOfCodesStats.add( new LineOfCodes(projectPath+path) );
+			LineOfCodes lc = new LineOfCodes(projectPath+path);
+			lineOfCodesStats.add( lc );
 			
 			mdf =  new MethodDeclearationFinder(projectPath, path);
 			
-			allMethodData.addAll(mdf.methods);
-		}
-		
-		
-		
+			//allMethodData.addAll(mdf.methods);
+			                        
+			                      //last element
+			allMethodData.addAll( getCyclomaticComplexity( lc.fileText, mdf.methods) );
+		}	
 		
 	}
+	
+	private String keyWords[] = {"if", "else if", "for", "do", "while"};
+	
+	private ArrayList<MethodData> getCyclomaticComplexity(ArrayList<String>lines, ArrayList<MethodData>md) {
+		
+		
+		for(int i=0; i<md.size(); i++) {
+			//System.out.print(md.get(i).filePath + " ");
+			//System.out.println(md.get(i).methodName);
+			int complexity = 1;
+			
+			
+			
+			int start = md.get(i).methodRange.get(0);
+			int last = md.get(i).methodRange.get(2);
+			
+			for(int j=start; j<=last; j++) {
+				
+				for(String s: keyWords) {
+					if( lines.get(j).contains(s)) {
+						complexity++;
+						break;
+					}
+				}
+			}
+			
+			md.get(i).complexity = complexity;
+		}
+		return md;
+	}
+	
 	
 	private void getFilePaths( File projectDir ) {
 		

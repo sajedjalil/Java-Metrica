@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class LineOfCodes {
 	
-	ArrayList<String> fileText = new ArrayList<String>();
+	public ArrayList<String> fileText = new ArrayList<String>();
 	
 	public int physicalLoc = 0;
 	public int totalStatement = 0;
