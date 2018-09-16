@@ -32,7 +32,7 @@ public class ObjectOrientedAnalyzer {
 	
 	private void printResult() {
 		for( ClassInfo c: classes) {
-			System.out.println(c.filePath + " "+c.totalMethods);
+			System.out.println(c.filePath + " "+c.totalMethods+" "+c.totalChilds);
 		}
 	}
 	

@@ -11,7 +11,7 @@ import com.google.common.base.Strings;
 import main.DirExplorer;
 
 public class StaticAnalyzerStarter {
-	
+	//file paths
 	public ArrayList<String> filePaths = new ArrayList<String>();
 	
 	CompilationUnit cu = null;
@@ -29,7 +29,7 @@ public class StaticAnalyzerStarter {
 		//analyze for each file
 		for(String path: filePaths) {
 			
-			String absolutePath = projectDir + path;
+			String absolutePath = projectDir.toString() + path;
 			/* find method name and line range in file
 			 * Also Contains method data
 			 */ 
@@ -38,7 +38,7 @@ public class StaticAnalyzerStarter {
 			allMethodData.addAll(mdf.methods);
 			
 			analyze(absolutePath);
-			printstaticAnalysisResult(path);
+			//printstaticAnalysisResult(path);
 			
 		}
 	}
@@ -78,7 +78,7 @@ public class StaticAnalyzerStarter {
 		
 		System.out.println(path);
 		System.out.println(Strings.repeat("=", path.length()));
-		System.out.println("LOC: "+ lc.loc);
+		System.out.println("LOC: "+ lc.totalStatement);
 		System.out.println("Single Comment Lines: "+ commentVisitor.singleCommentLines);
 		System.out.println("Multiple Comment Lines: "+ commentVisitor.multipleCommentsLine);
 		

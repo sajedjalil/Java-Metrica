@@ -30,8 +30,8 @@ public class Startup {
 		
 		inputDirectory = new File(System.getProperty("user.dir")+"/../JAVA-OOP");
 		
-		//new StaticAnalyzerStarter(inputDirectory);
-   	 	new ObjectOrientedAnalyzer( inputDirectory );
+		new StaticAnalyzerStarter(inputDirectory);
+   	 	//new ObjectOrientedAnalyzer( inputDirectory );
    	 	
    	 	
 	}
