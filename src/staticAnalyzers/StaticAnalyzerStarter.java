@@ -1,10 +1,8 @@
 package staticAnalyzers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.google.common.base.Strings;
 
@@ -13,10 +11,10 @@ import main.DirExplorer;
 public class StaticAnalyzerStarter {
 	//file paths
 	public ArrayList<String> filePaths = new ArrayList<String>();
+	public ArrayList<LineOfCodes> lineOfCodesStats = new ArrayList<LineOfCodes>();
 	
 	CompilationUnit cu = null;
 	LineOfCodes lc = null;
-	CommentFetecher commentVisitor = null;
 	ConditionalStatementFetcher complexityVisitor = null;
 	MethodDeclearationFinder mdf = null;
 	ArrayList<MethodData> allMethodData = new ArrayList<MethodData>();
@@ -26,40 +24,30 @@ public class StaticAnalyzerStarter {
 		//input directory base path
 		getFilePaths(projectDir);
 		
+		analyze(projectDir.toString());
 		//analyze for each file
-		for(String path: filePaths) {
-			
-			String absolutePath = projectDir.toString() + path;
-			/* find method name and line range in file
-			 * Also Contains method data
-			 */ 
-			mdf =  new MethodDeclearationFinder(absolutePath);
-			
-			allMethodData.addAll(mdf.methods);
-			
-			analyze(absolutePath);
-			//printstaticAnalysisResult(path);
-			
-		}
+		
+		printstaticAnalysisResult();
+		
 	}
 	
 	
 	
 	
 	
-	private void analyze(String absoluteFilePath) {
+	private void analyze(String projectPath) {
 		
-		try {
-			cu = JavaParser.parse(new File(absoluteFilePath));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
 		
-		lc = new LineOfCodes(absoluteFilePath);
+		for(String path: filePaths) {
+			
+			lineOfCodesStats.add( new LineOfCodes(projectPath+path) );
+			
+			mdf =  new MethodDeclearationFinder(projectPath, path);
+			
+			allMethodData.addAll(mdf.methods);
+		}
 		
-		commentVisitor = new CommentFetecher();
-		commentVisitor.visit(cu, null);
+		
 		
 		
 	}
@@ -74,17 +62,40 @@ public class StaticAnalyzerStarter {
 	}
 	
 	
-	public void printstaticAnalysisResult(String path) {
+	public void printstaticAnalysisResult() {
 		
-		System.out.println(path);
-		System.out.println(Strings.repeat("=", path.length()));
-		System.out.println("LOC: "+ lc.totalStatement);
-		System.out.println("Single Comment Lines: "+ commentVisitor.singleCommentLines);
-		System.out.println("Multiple Comment Lines: "+ commentVisitor.multipleCommentsLine);
 		
-		//System.out.println("\n");
-		for(MethodData md: allMethodData) {
-			System.out.println(md.methodName+" "+md.complexity);
+		int methodSerial = 0;
+		
+		
+		for(int i=0; i<filePaths.size(); i++) {
+			System.out.println(Strings.repeat("=", filePaths.get(i).length()));
+			System.out.println(filePaths.get(i));
+			System.out.println(Strings.repeat("=", filePaths.get(i).length()));
+			
+			System.out.println("Physical LOC: "+lineOfCodesStats.get(i).physicalLoc);
+			System.out.println("Total Statements: "+lineOfCodesStats.get(i).totalStatement);
+			System.out.println("Blank LOC: "+lineOfCodesStats.get(i).blankLines);
+			System.out.println("Single Comment Lines: "+lineOfCodesStats.get(i).singleCommentLines);
+			System.out.println("Multiple Comment Lines: "+lineOfCodesStats.get(i).multipleCommentLines);
+			System.out.printf("%s%.2f%s", "Comment Percentage: ", 
+					(double)((lineOfCodesStats.get(i).singleCommentLines + lineOfCodesStats.get(i).multipleCommentLines)*100.00) /
+					(double)(lineOfCodesStats.get(i).physicalLoc - lineOfCodesStats.get(i).blankLines) , "%\n");
+			
+			System.out.println(Strings.repeat("-", filePaths.get(i).length()));
+			for( ; methodSerial<allMethodData.size(); ) {
+				
+				if(allMethodData.get(methodSerial).filePath.equals(filePaths.get(i))) {
+					System.out.println(allMethodData.get(methodSerial).methodName+"\t"+"--"+"\tComplexity: "+allMethodData.get(methodSerial).complexity);
+					methodSerial++;
+				}	
+				else {
+					break;
+				}
+			}
+			
+			System.out.println(Strings.repeat("-", filePaths.get(i).length()));
+			
 		}
 	}
 	

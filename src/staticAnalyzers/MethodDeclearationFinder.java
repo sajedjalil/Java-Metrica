@@ -15,13 +15,13 @@ public class MethodDeclearationFinder {
 	
 	ArrayList<MethodData> methods = new ArrayList<MethodData>();
 	
-	public MethodDeclearationFinder(String filePath) {
+	public MethodDeclearationFinder(String basePath, String filePath) {
 		
-		listClasses(filePath);
+		listClasses(basePath, filePath);
 	}
 	
 	
-	private void listClasses(String absoluteFilePath) {
+	private void listClasses(String basePath, String filePath) {
         	
 		//System.out.println(absoluteFilePath);
         try {
@@ -30,9 +30,9 @@ public class MethodDeclearationFinder {
                     public void visit(MethodDeclaration n, Object arg) {
                         super.visit(n, arg);
                         
-                        methods.add( makeMethodData(n , absoluteFilePath) );
+                        methods.add( makeMethodData(n , basePath, filePath) );
                     }
-                }.visit(JavaParser.parse(new File(absoluteFilePath) ), null);
+                }.visit(JavaParser.parse(new File(basePath+filePath) ), null);
                 //System.out.println(); // empty line
             } catch (IOException e) {
                 new RuntimeException(e);
@@ -40,7 +40,7 @@ public class MethodDeclearationFinder {
 
     }
  
-	private MethodData makeMethodData(MethodDeclaration n, String absoluteFilePath) {
+	private MethodData makeMethodData(MethodDeclaration n, String basePath, String filePath) {
 		
 		String name = n.getNameAsString();
 		String range = n.getRange().toString();
@@ -48,6 +48,6 @@ public class MethodDeclearationFinder {
 		range = range.replaceAll("[^0-9]+", " "); 
 	    List<String> list = Arrays.asList(range.trim().split(" "));
 
-	    return new MethodData(name, list, absoluteFilePath);
+	    return new MethodData(name, list, basePath, filePath);
 	}
 }

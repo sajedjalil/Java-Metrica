@@ -13,13 +13,15 @@ public class MethodData {
 	String methodName = null;
 	ArrayList<Integer> methodRange = new ArrayList <Integer>();
 	
-	String absoluteFilePath = null;
+	String basePath = null;
+	String filePath = null;
 	int complexity = 1;
 	
-	public MethodData(String name, List<String> list, String absolutePath) {
+	public MethodData(String name, List<String> list, String basePath, String filePath) {
 		
 		methodName = name;
-		absoluteFilePath = absolutePath;
+		this.basePath =basePath;
+		this.filePath = filePath;
 		
 		for(String s: list) {
 			
@@ -33,7 +35,7 @@ public class MethodData {
 		
 		CompilationUnit cu = null;
 		try {
-			cu = JavaParser.parse(new File(absoluteFilePath));
+			cu = JavaParser.parse(new File(basePath+filePath));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

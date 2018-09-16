@@ -15,27 +15,19 @@ public class LineOfCodes {
 	public int singleCommentLines = 0;
 	public int multipleCommentLines = 0;
 	
+	public String filePath = "";
 	
 	public LineOfCodes(String filePath) {
 		
+		this.filePath = filePath;
 		//loc = getTotalLine(filePath);
 		loadFile(filePath);
 		
 		analyze();
 		
-		System.out.println(filePath);
-		print();
-	}
-	
-	
-	private void print() {
-		System.out.println(physicalLoc);
-		System.out.println(totalStatement);
-		System.out.println(blankLines);
-		System.out.println(singleCommentLines);
-		System.out.println(multipleCommentLines);
 		
 	}
+
 	
 	private void analyze( ) {
 		
