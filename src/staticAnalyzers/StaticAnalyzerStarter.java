@@ -1,6 +1,13 @@
 package staticAnalyzers;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import com.google.common.base.Strings;
 
@@ -23,8 +30,8 @@ public class StaticAnalyzerStarter {
 		analyze(projectDir.toString());
 		//analyze for each file
 		
-		printstaticAnalysisResult();
-		
+		//printstaticAnalysisResult();
+		writeResultToFile("StaticResult.txt");
 	}
 	
 	
@@ -128,7 +135,77 @@ public class StaticAnalyzerStarter {
 	}
 	
 
-	
+	private void writeResultToFile(String path) {
+		
+	    Path file = Paths.get(path);
+	    try (
+	    	BufferedWriter writer = Files.newBufferedWriter(file, Charset.defaultCharset())) {
+	    	
+	    	int methodSerial = 0;
+	    	int len = filePaths.size();
+	    	
+	    	for(int i=0; i<len; i++) {
+				
+	    		String formatted = "";
+	    		writer.write(Strings.repeat("=", filePaths.get(i).length()));
+	    		writer.newLine();
+	    		writer.write(filePaths.get(i));
+	    		writer.newLine();
+	    		writer.write(Strings.repeat("=", filePaths.get(i).length()));
+	    		writer.newLine();
+				
+	    		
+	    		formatted = String.format("%-35s %4d", "Physical LOC: ",lineOfCodesStats.get(i).physicalLoc);
+				writer.write(formatted);
+				writer.newLine();
+				
+				formatted = String.format("%-35s %4d", "Total Statements: ",lineOfCodesStats.get(i).totalStatement);
+				writer.write(formatted);
+				writer.newLine();
+				
+				formatted = String.format("%-35s %4d", "Blank LOC: ",lineOfCodesStats.get(i).blankLines);
+				writer.write(formatted);
+				writer.newLine();
+				
+				formatted = String.format("%-35s %4d", "Single Comment Lines: ",lineOfCodesStats.get(i).singleCommentLines);
+				writer.write(formatted);
+				writer.newLine();
+				
+				formatted = String.format("%-35s %4d", "Multiple Comment Lines: ",lineOfCodesStats.get(i).multipleCommentLines);
+				writer.write(formatted);
+				writer.newLine();
+				
+				String percentage = String.format("%.2f", (double)((lineOfCodesStats.get(i).singleCommentLines + lineOfCodesStats.get(i).multipleCommentLines)*100.00) /
+						(double)(lineOfCodesStats.get(i).physicalLoc - lineOfCodesStats.get(i).blankLines));
+				formatted = String.format("%-34s %4s", "Comment Percentage: ",percentage);
+				writer.write(formatted+"%");
+				writer.newLine();
+				
+				
+				writer.write(Strings.repeat("-", filePaths.get(i).length()));
+				writer.newLine();
+				for( ; methodSerial<allMethodData.size(); ) {
+					
+					if(allMethodData.get(methodSerial).filePath.equals(filePaths.get(i))) {
+						writer.write(allMethodData.get(methodSerial).methodName+"\t"+"--"+"\tComplexity: "+allMethodData.get(methodSerial).complexity);
+						writer.newLine();
+						methodSerial++;
+					}	
+					else {
+						break;
+					}
+				}
+				
+				writer.write(Strings.repeat("-", filePaths.get(i).length()));
+				writer.newLine();
+				
+			}
+	    } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 	
 }
