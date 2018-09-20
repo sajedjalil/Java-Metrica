@@ -2,6 +2,7 @@ package objectOrientedAnalysis;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +11,9 @@ import java.util.List;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 class ClassInfo {
@@ -23,17 +26,20 @@ class ClassInfo {
 	String className = null; //done
 	int depthOfInheritence;
 	int totalChilds = 0; //done
+	int noOfFields = 0;
+	ArrayList<String> fields = new ArrayList<String>();
 	
 	public ClassInfo(String filePath) {
 		
 		this.filePath = filePath;
 		findMethodCount();
 		findClassNameAndParentClass();
+		collectFields(new File(filePath));
+		System.out.println(fields);
+
 	}
 	
-	
-	void findMethodCount() {
-		
+	void findMethodCount() {	
 		try {
             new VoidVisitorAdapter<Object>() {
                     @Override
@@ -46,10 +52,32 @@ class ClassInfo {
                 //System.out.println(); // empty line
             } catch (IOException e) {
                 new RuntimeException(e);
-            }
+        }
+	}
+	
+	void collectFields(File file) {
+		try {
+            new VoidVisitorAdapter<Object>() {
+                    @Override
+                    public void visit(FieldDeclaration n, Object arg) {
+                        super.visit(n, arg);
+                        for(VariableDeclarator v:n.getVariables()) {
+                        	if(v.toString().contains("=")) {
+                        		String[] voo = v.toString().split("=");
+                				fields.add(voo[0]);
+                        	}
+                        	else fields.add(v.toString());
+                        }
+                    }
+                }.visit(JavaParser.parse(file), null);
+            } catch (IOException e) {
+                new RuntimeException(e);
+        }	
 	}
 	
 	
+	
+
 	void findClassNameAndParentClass() {
 		
 		try {
