@@ -13,6 +13,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.google.common.base.Optional;
 
 public class ClassData {
@@ -20,19 +21,16 @@ public class ClassData {
 	ArrayList<String> methods = new ArrayList<>();
 	HashMap<String,ArrayList<String>> nodes = new HashMap<>();
 	ClassOrInterfaceDeclaration cu;
+	String parent,file;
+	private int inheritanceDepth = 0,noOfChildren = 0;
 	
-	public ClassData(ClassOrInterfaceDeclaration cu) {
+	public ClassData(ClassOrInterfaceDeclaration cu,String file) {
 		this.cu = cu;
+		this.file = file;
 		collectClassData();
 		createGraph();
-		java.util.Optional<ClassOrInterfaceDeclaration> parent = cu.findAncestor(ClassOrInterfaceDeclaration.class);
-		if(parent.isPresent()) {
-			String me = parent.get().findFirst(ClassOrInterfaceDeclaration.class).get().getNameAsString();
-			System.out.println("BAP:"+cu.getNameAsString()+","+ me);
-		}
-		else {
-			System.out.println(cu.getNameAsString());
-		}
+		NodeList<ClassOrInterfaceType> pars = cu.getExtendedTypes();
+		if(pars.size()>0) parent = file+"/"+pars.get(0).getNameAsString();
 	}
 	
 	public int getCohesion() {
@@ -114,5 +112,13 @@ public class ClassData {
 		for(String mate:nodes.get(v)) {
 			if(!vis.get(mate)) dfs(mate,vis);
 		}
+	}
+	
+	void setInheritanceDepth(int c) {
+		this.inheritanceDepth = c;
+	}
+	
+	void setNoChilds(int c) {
+		this.noOfChildren = c;
 	}
 }

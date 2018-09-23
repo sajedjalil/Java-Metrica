@@ -26,11 +26,15 @@ public class PackageData {
 	private ArrayList<String> filePaths = new ArrayList<>();
 	private ArrayList<String> classNames = new ArrayList<>();
 	private HashMap<String,ClassData> classObj = new HashMap<>();
+	private HashMap<String,ArrayList<String>> parToChild = new HashMap<>();
 	
 	public PackageData() throws FileNotFoundException {
 		getFilePaths(new File(FILE_PATH));
 		getClassPaths();	
-		System.out.println(classNames);
+		mapParToChild();
+		System.out.println("HALUM");
+		System.out.println(calculateNoOfChildren());
+		System.out.println(calculateInheritanceDepth());
 	}
 	
 	public HashMap<String,Integer> calculateCoupling() throws FileNotFoundException {
@@ -43,6 +47,28 @@ public class PackageData {
 			});
 		}
 		return fanouts;
+	}
+	
+	public HashMap<String, Integer> calculateNoOfChildren(){
+		HashMap<String,Integer> inhDepth = new HashMap<String,Integer>();
+		for(String cls:parToChild.keySet()) {
+			inhDepth.put(cls,parToChild.get(cls).size());
+		}
+		return inhDepth;
+	}
+	
+	public HashMap<String,Integer> calculateInheritanceDepth(){
+		HashMap<String,Integer> inhDepth = new HashMap<String,Integer>();
+		for(String cls:classNames) {
+			int depth = 0;
+			ClassData obj = classObj.get(cls);
+			while(obj.parent!=null) {
+				depth++;
+				obj = classObj.get(obj.parent);
+			}
+			inhDepth.put(cls,depth);
+		}
+		return inhDepth;
 	}
 	
 	private void getFilePaths( File projectDir ) {
@@ -60,7 +86,8 @@ public class PackageData {
 			cu.findAll(ClassOrInterfaceDeclaration.class).forEach(cli -> {
 				String cname = file+"/"+cli.getNameAsString();
 				classNames.add(cname);
-				classObj.put(cname,new ClassData(cli));
+				classObj.put(cname,new ClassData(cli,file));
+				parToChild.put(cname,new ArrayList<>());
 			});
 		}
 	}
@@ -76,4 +103,17 @@ public class PackageData {
 		});
 		return refs.size();
 	}
+	
+	private void mapParToChild() {
+		System.out.println("INSIDE"+parToChild);
+		for(String cls:classNames) {
+			ClassData obj = classObj.get(cls);
+			System.out.println(cls+","+obj.parent);
+			if(obj.parent==null) continue;
+			parToChild.get(obj.parent).add(cls);
+		}
+	}
+	
+	
+	
 }
