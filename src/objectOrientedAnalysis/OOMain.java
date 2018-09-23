@@ -1,12 +1,15 @@
 package objectOrientedAnalysis;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 
 public class OOMain {
 
 	public static void main(String[] args) {
-		File inputDirectory = new File(System.getProperty("user.dir")+"/../JAVA-OOP/src/com/broccolinisoup/oop/general/aboutThisKeyword");
-		ObjectOrientedAnalyzer oo = new ObjectOrientedAnalyzer(inputDirectory);
+		try {
+			new PackageData();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
