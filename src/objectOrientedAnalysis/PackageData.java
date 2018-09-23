@@ -39,14 +39,29 @@ public class PackageData {
 	
 	public HashMap<String,Integer> calculateCoupling() throws FileNotFoundException {
 		HashMap<String,Integer> fanouts = new HashMap<String,Integer>();
-		for(String file : filePaths) {
-			CompilationUnit cu = JavaParser.parse(new File(file));
-			cu.findAll(ClassOrInterfaceDeclaration.class).forEach(cli -> {
-				String clsName = file+"/"+cli.getNameAsString();
-				fanouts.put(clsName,countFanOut(cli));
-			});
+		for(String cls:classObj.keySet()) {
+			ClassData obj = classObj.get(cls);
+			fanouts.put(cls,countFanOut(obj.clsDec));
 		}
 		return fanouts;
+	}
+	
+	public HashMap<String,Integer> calculateCohesion(){
+		HashMap<String,Integer> cohs = new HashMap<String,Integer>();
+		for(String cls:classNames) {
+			ClassData obj = classObj.get(cls);
+			cohs.put(cls,obj.getCohesion());
+		}
+		return cohs;
+	}
+	
+	public HashMap<String,Integer> calculateRFC(){
+		HashMap<String,Integer> rfcs = new HashMap<String,Integer>();
+		for(String cls:classNames) {
+			ClassData obj = classObj.get(cls);
+			rfcs.put(cls,obj.getRFC());
+		}
+		return rfcs;
 	}
 	
 	public HashMap<String, Integer> calculateNoOfChildren(){
@@ -62,7 +77,7 @@ public class PackageData {
 		for(String cls:classNames) {
 			int depth = 0;
 			ClassData obj = classObj.get(cls);
-			while(obj.parent!=null) {
+			while(obj.parent!=null && classNames.contains(obj.parent)) {
 				depth++;
 				obj = classObj.get(obj.parent);
 			}
@@ -108,8 +123,7 @@ public class PackageData {
 		System.out.println("INSIDE"+parToChild);
 		for(String cls:classNames) {
 			ClassData obj = classObj.get(cls);
-			System.out.println(cls+","+obj.parent);
-			if(obj.parent==null) continue;
+			if(obj.parent==null || !classNames.contains(obj.parent)) continue;
 			parToChild.get(obj.parent).add(cls);
 		}
 	}

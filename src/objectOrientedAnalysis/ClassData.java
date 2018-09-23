@@ -20,12 +20,13 @@ public class ClassData {
 	ArrayList<String> fields = new ArrayList<>();
 	ArrayList<String> methods = new ArrayList<>();
 	HashMap<String,ArrayList<String>> nodes = new HashMap<>();
-	ClassOrInterfaceDeclaration cu;
+	ClassOrInterfaceDeclaration clsDec;
 	String parent,file;
-	private int inheritanceDepth = 0,noOfChildren = 0;
+	private int inheritanceDepth = 0,noOfChildren = 0,rfc = 0;
+	
 	
 	public ClassData(ClassOrInterfaceDeclaration cu,String file) {
-		this.cu = cu;
+		this.clsDec = cu;
 		this.file = file;
 		collectClassData();
 		createGraph();
@@ -46,21 +47,28 @@ public class ClassData {
 		return cc;
 	}
 	
+	public int getRFC() {
+		clsDec.findAll(MethodCallExpr.class).forEach(mce -> {
+			rfc++;
+		});
+		return rfc + methods.size();
+	}
+	
 	private void collectClassData() {
-		cu.findAll(FieldDeclaration.class).forEach(fd ->{
+		clsDec.findAll(FieldDeclaration.class).forEach(fd ->{
             for(VariableDeclarator v:fd.getVariables()) {
             	fields.add(v.getNameAsString());
             	nodes.put(v.getNameAsString(), new ArrayList<>());
             }
 		});
-		cu.findAll(MethodDeclaration.class).forEach(m ->{
+		clsDec.findAll(MethodDeclaration.class).forEach(m ->{
             methods.add(m.getNameAsString());
             nodes.put(m.getNameAsString(), new ArrayList<>());
 		});
 	}
 	
 	private void createGraph(){
-		cu.findAll(MethodDeclaration.class).forEach(m ->{
+		clsDec.findAll(MethodDeclaration.class).forEach(m ->{
             createMethodEdges(m);
 		});
 	}
