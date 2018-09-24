@@ -2,7 +2,6 @@ package main;
 
 import java.io.File;
 
-import objectOrientedAnalysis.ObjectOrientedAnalyzer;
 import staticAnalyzers.StaticAnalyzerStarter;
 
 public class Startup {

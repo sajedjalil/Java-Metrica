@@ -1,0 +1,9 @@
+Path,LOC,Comment,Coupling,Cohesion,RFC,No of Child,Depth of Inheritence
+ClassPathElement,171,17,0,4,41,0,0
+ClassSpecificationElement,223,5,0,7,52,1,0
+ConfigurationElement,87,8,0,1,20,0,0
+ConfigurationTask,446,5,0,1,103,1,0
+FilterElement,51,1,0,2,12,0,0
+KeepSpecificationElement,72,1,0,1,13,0,1
+MemberSpecificationElement,181,2,0,6,39,0,0
+ProGuardTask,357,5,0,30,82,0,1

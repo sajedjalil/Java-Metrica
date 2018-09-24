@@ -10,9 +10,17 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.BlockComment;
+import com.github.javaparser.ast.comments.JavadocComment;
+import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.stmt.DoStmt;
+import com.github.javaparser.ast.stmt.ForStmt;
+import com.github.javaparser.ast.stmt.ForeachStmt;
+import com.github.javaparser.ast.stmt.IfStmt;
+import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.google.common.base.Optional;
 
@@ -22,7 +30,7 @@ public class ClassData {
 	HashMap<String,ArrayList<String>> nodes = new HashMap<>();
 	ClassOrInterfaceDeclaration clsDec;
 	String parent,file;
-	private int inheritanceDepth = 0,noOfChildren = 0,rfc = 0;
+	private int inheritanceDepth = 0,noOfChildren = 0,rfc = 0,cmntSize = 0,cycComplex = 0;
 	
 	
 	public ClassData(ClassOrInterfaceDeclaration cu,String file) {
@@ -31,7 +39,17 @@ public class ClassData {
 		collectClassData();
 		createGraph();
 		NodeList<ClassOrInterfaceType> pars = cu.getExtendedTypes();
-		if(pars.size()>0) parent = file+"/"+pars.get(0).getNameAsString();
+		if(pars.size()>0) parent = pars.get(0).getNameAsString();
+	}
+	
+	public int cmntLoc() {
+		cmntSize = clsDec.findAll(LineComment.class).size();
+		clsDec.findAll(MethodDeclaration.class).forEach(md->{
+			cmntSize += md.findAll(LineComment.class).size();
+		});
+		int block = clsDec.findAll(JavadocComment.class).size();
+		//System.out.println(block);
+		return  cmntSize;
 	}
 	
 	public int getCohesion() {
@@ -52,6 +70,23 @@ public class ClassData {
 			rfc++;
 		});
 		return rfc + methods.size();
+	}
+	
+	int cyc() {
+		cycComplex += 1;
+		clsDec.findAll(MethodDeclaration.class).forEach(md->{
+			cycComplex += md.findAll(IfStmt.class).size();
+			cycComplex += md.findAll(ForeachStmt.class).size();
+			cycComplex += md.findAll(ForStmt.class).size();
+			cycComplex += md.findAll(WhileStmt.class).size();
+			cycComplex += md.findAll(DoStmt.class).size();
+		});
+		return cycComplex;
+	}
+	
+	int weightedCyc(){
+		if(cycComplex==0) cyc();
+		return methods.size()==0?1: cycComplex/methods.size();
 	}
 	
 	private void collectClassData() {
@@ -105,11 +140,12 @@ public class ClassData {
 		 
 		 //all this.x kind of stmt can only refer to class vars,can't be caught by NameExpr
 		 m.findAll(FieldAccessExpr.class).forEach(fae->{
-			 String[] tmp = fae.toString().split("\\.");
-			 //Below,no need to check if tmp[1] -in fields
-			 if(tmp[0].equals("this")) {
-				 nodes.get(m.getNameAsString()).add(fae.getNameAsString());
-				 nodes.get(fae.getNameAsString()).add(m.getNameAsString());
+			 if(nodes.containsKey(fae.getNameAsString())) {
+				 String[] tmp = fae.toString().split("\\.");
+				 if(tmp[0].equals("this")) {
+					 nodes.get(m.getNameAsString()).add(fae.getNameAsString());
+					 nodes.get(fae.getNameAsString()).add(m.getNameAsString());
+				 }
 			 }
 		 });
 	}
@@ -122,11 +158,5 @@ public class ClassData {
 		}
 	}
 	
-	void setInheritanceDepth(int c) {
-		this.inheritanceDepth = c;
-	}
-	
-	void setNoChilds(int c) {
-		this.noOfChildren = c;
-	}
+
 }
