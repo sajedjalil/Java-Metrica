@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import main.DirExplorer;
+//import main.DirExplorer;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -16,13 +16,15 @@ import com.github.javaparser.ast.expr.ObjectCreationExpr;
 
 
 public class PackageData {
-	private final String FILE_PATH = "E:\\proguard";
+	private final String FILE_PATH;
 	private ArrayList<String> filePaths = new ArrayList<>();
 	public ArrayList<String> classNames = new ArrayList<>();
 	private HashMap<String,ClassData> classObj = new HashMap<>();
 	private HashMap<String,ArrayList<String>> parToChild = new HashMap<>();
 	
-	public PackageData() throws FileNotFoundException {
+	public PackageData(String filePath) throws FileNotFoundException {
+		FILE_PATH = filePath;
+		
 		getFilePaths(new File(FILE_PATH));
 		
 		getClassPaths();	

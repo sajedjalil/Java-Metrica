@@ -10,9 +10,11 @@ public class OOMain {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
+		final String FILE_PATH = "E:\\proguard";
+		
 		final long startTime = System.currentTimeMillis();
 		
-		PackageData pck = new PackageData();
+		PackageData pck = new PackageData(FILE_PATH);
 		HashMap<String,Integer> coupling = pck.calculateCoupling();
 		HashMap<String,Integer> cohesion = pck.calculateCohesion();
 		HashMap<String,Integer> rfc = pck.calculateRFC();
